@@ -13,7 +13,7 @@ class Project extends Model
 
     protected $fillable = ['name', 'description', 'user_id',];
 
-    protected $softCascade = ['tasks'];
+    protected $softCascade = ['task'];
 
     public function user()
     {

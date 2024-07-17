@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->unsignedBigInteger('project_id');
-            $table->foreign('project_id')->references('id')->on('projects');
+            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
             $table->enum('status', ['pending', 'in-progress', 'completed'])->default('pending');
             $table->timestamps();
             $table->softDeletes();
