@@ -31,21 +31,21 @@ Dealer Consulting Testing
 ```
 > open folder
 ```bash
-$ cd test-dealer-consulting
+ cd test-dealer-consulting
 ```
 > Create file .env
 ```bash
-$ cp .env.example .env.
+ cp .env.example .env.
 ```
 > Generate Key Of .env
 ```bash
-$ php artisan key:generate.
+ php artisan key:generate.
 ```
 
 ### Create DataBase && Migration && Seeding
 > Create DataBase
 ```bash
-$ CREATE DATABASE IF NOT EXISTS 'dealerconsulting'
+ CREATE DATABASE IF NOT EXISTS 'dealerconsulting'
 ```
 > Go to file .env
 ```bash
@@ -53,7 +53,7 @@ DB_DATABASE=dealerconsulting
 ```
 # Migration Table and seeder
 ```bash
-$ php artisan migrate --seed
+ php artisan migrate --seed
 
 ```
 
