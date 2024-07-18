@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\User\Resources;
 
-use App\Filament\Resources\TaskResource\Pages;
-use App\Filament\Resources\TaskResource\RelationManagers;
+use App\Filament\User\Resources\TaskResource\Pages;
+use App\Filament\User\Resources\TaskResource\RelationManagers;
 use App\Models\Project;
 use App\Models\Task;
 use Filament\Forms;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\SelectColumn;
-use Filament\Tables\Columns\TextColumn;
 
 class TaskResource extends Resource
 {
@@ -24,8 +24,7 @@ class TaskResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Task';
-
+    protected static ?string $navigationGroup = 'Task Management';
 
     public static function form(Form $form): Form
     {
@@ -36,7 +35,7 @@ class TaskResource extends Resource
                     ->maxLength(255),
                 Select::make('project_id')
                     ->label('Project')
-                    ->options(Project::all()->pluck('name', 'id')),
+                    ->options(Project::where('user_id', auth()->id())->pluck('name', 'id')),
                 Select::make('status')
                     ->options([
                         'pending' => 'Pending',
@@ -48,7 +47,6 @@ class TaskResource extends Resource
                     ->hintColor('heroicon-m-language')
                     ->columnSpanFull()
                     ->required(),
-
             ])->columns(3);
     }
 

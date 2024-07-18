@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\User\Resources;
 
-use App\Filament\Resources\ProjectResource\Pages;
-use App\Filament\Resources\ProjectResource\RelationManagers;
+use App\Filament\User\Resources\ProjectResource\Pages;
+use App\Filament\User\Resources\ProjectResource\RelationManagers;
+use App\Filament\User\Resources\ProjectResource\RelationManagers\UserRelationManager;
 use App\Models\Project;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -21,9 +23,16 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cube';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Project';
+    protected static ?string $navigationGroup = 'Project Mangement';
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['user_id'] = auth()->id();
+
+        return $data;
+    }
 
     public static function form(Form $form): Form
     {
@@ -32,16 +41,14 @@ class ProjectResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Select::make('user_id')
-                    ->label('User')
-                    ->options(User::all()->pluck('name', 'id'))
-                    ->searchable(),
+                Hidden::make('user_id')->default(auth()->id()),
+
                 RichEditor::make('description')
                     ->hint('Translatable')
                     ->hintColor('heroicon-m-language')
                     ->columnSpanFull()
                     ->required(),
-            ])->columns(2);
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -50,13 +57,12 @@ class ProjectResource extends Resource
             ->columns([
                 TextColumn::make('name')->sortable()->searchable(),
                 TextColumn::make('description'),
-                TextColumn::make('user.name')->sortable()->searchable(),
+                TextColumn::make('user.name')->sortable()->searchable()->exists('user'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
             ])
-            ->defaultSort('name', 'asc')
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
@@ -66,7 +72,7 @@ class ProjectResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
@@ -77,7 +83,7 @@ class ProjectResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            // UserRelationManager::class
         ];
     }
 

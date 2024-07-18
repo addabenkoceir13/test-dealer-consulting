@@ -20,7 +20,25 @@ class UserSeeder extends Seeder
             "email_verified_at" =>now(),
             'password' => 123456789,
             'role' => 'admin',
-            'remember_token' => Str::random(10),
+            'remember_token' => Str::random(20),
+        ]);
+
+        User::create([
+            'name' => "User#01",
+            'email' => "user01@gmail.com",
+            "email_verified_at" =>now(),
+            'password' => 123456789,
+            'role' => 'user',
+            'remember_token' => Str::random(20),
+        ]);
+
+        User::create([
+            'name' => "user#02",
+            'email' => "user02@gmail.com",
+            "email_verified_at" =>now(),
+            'password' => 123456789,
+            'role' => 'user',
+            'remember_token' => Str::random(20),
         ]);
     }
 }
