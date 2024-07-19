@@ -18,6 +18,7 @@ class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes, SoftCascadeTrait;
 
+    protected $softCascade = ['project', 'tasks'];
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
         if ($panel->getId() === 'admin') {
