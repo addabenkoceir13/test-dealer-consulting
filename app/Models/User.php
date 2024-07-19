@@ -68,10 +68,15 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(Project::class);
     }
 
+    public function tasks()
+    {
+        return $this->hasManyThrough(Task::class, Project::class);
+    }
+
     public function isAdmin()
     {
         return $this->role === 'admin';
     }
 
-    
+
 }

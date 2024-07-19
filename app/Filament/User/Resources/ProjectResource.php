@@ -11,6 +11,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -55,9 +56,15 @@ class ProjectResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->sortable()->searchable(),
-                TextColumn::make('description'),
-                TextColumn::make('user.name')->sortable()->searchable()->exists('user'),
+                TextColumn::make('name')
+                    ->sortable()->searchable(),
+                TextColumn::make('description')
+                    ->label('Description')
+                    ->formatStateUsing(function ($state) {
+                        return strip_tags($state);
+                    }),
+                TextColumn::make('user.name')
+                    ->sortable()->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true)
@@ -72,12 +79,13 @@ class ProjectResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                    Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
-                ]),
-            ]);
+                ])
+            ])
+            ;
     }
 
     public static function getRelations(): array
@@ -98,9 +106,13 @@ class ProjectResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+        return parent::getEloquentQuery()->where('user_id', auth()->id());
+
+        // return parent::getEloquentQuery()
+        //     ->withoutGlobalScopes([
+        //         SoftDeletingScope::class,
+        //     ]);
     }
+
+
 }

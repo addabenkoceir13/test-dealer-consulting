@@ -54,8 +54,15 @@ class TaskResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->sortable()->searchable(),
-                TextColumn::make('description'),
+                TextColumn::make('name')
+                    ->sortable()->searchable(),
+                TextColumn::make('project.name')
+                    ->sortable()->searchable(),
+                TextColumn::make('description')
+                    ->label('Description')
+                    ->formatStateUsing(function ($state) {
+                        return strip_tags($state);
+                    }),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -110,9 +117,12 @@ class TaskResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+        return parent::getEloquentQuery()->whereHas('project', function (Builder $query) {
+            $query->where('user_id', auth()->id());
+        });
+        // return parent::getEloquentQuery()
+        //     ->withoutGlobalScopes([
+        //         SoftDeletingScope::class,
+        //     ]);
     }
 }
